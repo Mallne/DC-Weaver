@@ -4,6 +4,7 @@ import cloud.mallne.dicentra.weaver.model.access.Accessor
 import cloud.mallne.dicentra.weaver.model.access.Ownership
 import cloud.mallne.dicentra.weaver.model.edge.ComputedEdge
 import cloud.mallne.dicentra.weaver.model.node.ComputedNode
+import cloud.mallne.dicentra.weaver.model.node.ComputedTrigger
 
 interface WeaverWorkspace {
     val name: String
@@ -13,4 +14,5 @@ interface WeaverWorkspace {
 
     val edges: List<ComputedEdge>
     val nodes: List<ComputedNode>
+    val trigger: List<ComputedTrigger>
 }
