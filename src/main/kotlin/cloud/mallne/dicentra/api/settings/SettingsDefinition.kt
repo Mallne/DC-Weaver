@@ -15,6 +15,10 @@ data class SettingsDefinition<T>(
     }
 
     fun toKV(va: T = defaultVal, forced: Boolean = forcedByLicense): KeyValueSetting {
-        return KeyValueSetting(key, va.toString(), forced)
+        return object: KeyValueSetting {
+            override val forcedByLicense: Boolean = forced
+            override val value: String = va.toString()
+            override val key: String = this@SettingsDefinition.key
+        }
     }
 }

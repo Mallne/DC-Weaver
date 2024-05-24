@@ -7,9 +7,12 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 object DefaultLicense : LicenseCommons {
+    fun <T:KeyValueSetting> forcedSettingsOfType(): Set<T> {
+        return emptySet()
+    }
     override val key: String
         get() = LicenseKeyGen.generateKey()
-    override val forcedSettings: Set<KeyValueSetting> = emptySet()
+    override val forcedSettings: Set<KeyValueSetting> = forcedSettingsOfType()
     override val boundRoles: Set<String> = Roles.defaultRoleSet()
     override val validUntil: LocalDate
         get() = LocalDate.now().plus(1, ChronoUnit.YEARS)

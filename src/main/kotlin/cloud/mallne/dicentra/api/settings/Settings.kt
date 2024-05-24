@@ -24,7 +24,7 @@ object Settings {
                 SettingsDefinition("dc.aa.autosync", false, requiresRole = setOf(Roles.AreaAssist.App.ACCESS))
         }
 
-        object DP {
+        object AV {
             object Display {
                 val All = SettingsDefinition("dc.av.display.all", false, requiresRole = setOf(Roles.Aviator.ACCESS))
             }
@@ -38,6 +38,6 @@ object Settings {
         DC.Dashboard.OmitMenu.WD,
         DC.Dashboard.OmitMenu.AT,
         DC.AA.AutoSync,
-        DC.DP.Display.All
+        DC.AV.Display.All
     )
 }
