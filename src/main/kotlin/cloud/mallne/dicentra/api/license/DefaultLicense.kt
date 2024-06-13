@@ -7,9 +7,10 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 object DefaultLicense : LicenseCommons {
-    fun <T:KeyValueSetting> forcedSettingsOfType(): Set<T> {
+    fun <T : KeyValueSetting> forcedSettingsOfType(): Set<T> {
         return emptySet()
     }
+
     override val key: String
         get() = LicenseKeyGen.generateKey()
     override val forcedSettings: Set<KeyValueSetting> = forcedSettingsOfType()
@@ -23,7 +24,7 @@ object DefaultLicense : LicenseCommons {
     override val autoRenewable: Boolean
         get() = true
     override val renewPeriod: String
-        get() = "1Y" // Has always to be a valid ISO 8601 duration
+        get() = "P1Y" // Has always to be a valid ISO 8601 duration
     override val grantsAccessTo: Set<Modules>
         get() = Modules.defaultModuleSet()
 
