@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val coroutinesVersion = "1.8.1"
 
 plugins {
-    id("org.springframework.boot") version "3.3.0"
+    id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "2.0.0"
     kotlin("plugin.spring") version "2.0.0"
