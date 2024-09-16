@@ -65,4 +65,8 @@ object Roles {
     object Architect {
         const val ACCESS = "architect.access"
     }
+
+    object Venatio {
+        const val ACCESS = "venatio.access"
+    }
 }
