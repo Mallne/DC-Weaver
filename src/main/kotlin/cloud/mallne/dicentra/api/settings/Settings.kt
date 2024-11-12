@@ -8,38 +8,67 @@ object Settings {
         object Dashboard {
             object OmitMenu {
                 val AA =
-                    SettingsDefinition("dc.dashboard.omitmenu.aa", false, requiresRole = setOf(Roles.AreaAssist.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.aa",
+                        false,
+                        requiresRole = setOf(Roles.AreaAssist.ACCESS)
+                    )
                 val AV =
-                    SettingsDefinition("dc.dashboard.omitmenu.av", false, requiresRole = setOf(Roles.Aviator.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.av",
+                        false,
+                        requiresRole = setOf(Roles.Aviator.ACCESS)
+                    )
                 val HL =
-                    SettingsDefinition("dc.dashboard.omitmenu.hl", false, requiresRole = setOf(Roles.Herald.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.hl",
+                        false,
+                        requiresRole = setOf(Roles.Herald.ACCESS)
+                    )
                 val WD =
-                    SettingsDefinition("dc.dashboard.omitmenu.wd", false, requiresRole = setOf(Roles.Warden.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.wd",
+                        false,
+                        requiresRole = setOf(Roles.Warden.ACCESS)
+                    )
                 val AT =
-                    SettingsDefinition("dc.dashboard.omitmenu.at", false, requiresRole = setOf(Roles.Architect.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.at",
+                        false,
+                        requiresRole = setOf(Roles.Architect.ACCESS)
+                    )
                 val VN =
-                    SettingsDefinition("dc.dashboard.omitmenu.vn", false, requiresRole = setOf(Roles.Venatio.ACCESS))
+                    SettingsDefinition.from(
+                        "dc.dashboard.omitmenu.vn",
+                        false,
+                        requiresRole = setOf(Roles.Venatio.ACCESS)
+                    )
             }
         }
 
         object AA {
             val AutoSync =
-                SettingsDefinition("dc.aa.autosync", false, requiresRole = setOf(Roles.AreaAssist.App.ACCESS))
+                SettingsDefinition.from("dc.aa.autosync", false, requiresRole = setOf(Roles.AreaAssist.App.ACCESS))
         }
 
         object AV {
             object Display {
-                val All = SettingsDefinition("dc.av.display.all", false, requiresRole = setOf(Roles.Aviator.ACCESS))
+                val All =
+                    SettingsDefinition.from("dc.av.display.all", false, requiresRole = setOf(Roles.Aviator.ACCESS))
             }
         }
 
         object VN {
             val Instance =
-                SettingsDefinition<Instance>("dc.vn.instance", null, requiresRole = setOf(Roles.Venatio.ACCESS))
+                SettingsDefinition.from(
+                    "dc.vn.instance",
+                    emptyList<Instance>(),
+                    requiresRole = setOf(Roles.Venatio.ACCESS)
+                )
         }
     }
 
-    val allSettings: Set<SettingsDefinition<*>> = setOf(
+    val allSettings: Set<SettingsDefinition> = setOf(
         DC.Dashboard.OmitMenu.AA,
         DC.Dashboard.OmitMenu.AV,
         DC.Dashboard.OmitMenu.HL,
