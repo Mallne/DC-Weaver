@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.spring") version "2.0.21"
 }
 
-group = "cloud.mallne.dc"
+group = "cloud.mallne.dicentra"
 version = "0.0.1-SNAPSHOT"
 
 java {
