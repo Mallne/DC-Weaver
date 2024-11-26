@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val coroutinesVersion = "1.9.0"
 
 plugins {
-    id("org.springframework.boot") version "3.3.5"
+    id("org.springframework.boot") version "3.4.0"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
@@ -26,7 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${coroutinesVersion}")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.7.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation(kotlin("script-runtime"))
     implementation("org.springframework:spring-web")
