@@ -26,7 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${coroutinesVersion}")
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation(kotlin("script-runtime"))
     implementation("org.springframework:spring-web")
