@@ -15,4 +15,11 @@ dependencyResolutionManagement {
     }
 }
 
-include("server")
+include(":core")
+val apiDest = file("../polyfill/library")
+if (apiDest.exists()) {
+    include("polyfill")
+    project(":polyfill").projectDir = apiDest
+} else {
+    println("This Project seems to be running without the Monorepo Context, please consider using the Monorepo")
+}

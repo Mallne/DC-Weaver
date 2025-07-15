@@ -1,1 +1,0 @@
-package cloud.mallne.dicentra.weaver.plugins.translationkeys
