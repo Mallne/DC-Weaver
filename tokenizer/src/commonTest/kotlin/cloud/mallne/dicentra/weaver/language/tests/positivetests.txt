@@ -1,0 +1,17 @@
+menu.id
+{otherSchema}
+me{nuitem}s.nested
+{otherSchema.nested}
+{<menuKey>}
+{otherSchema.<menuKey>}
+{<<param>>}
+{<menuKey>(param=<menuValue>)}
+menu.popup.menuitem[1]
+menu.popup.menuitem[{<indexvalue>}]
+menu.popup.menuitem[{|<indexvalue>|i|}]
+menu.{otherschema.nested}.menuitem[{<<param>>}]
+{<<param>>}.menu.nested
+menu.{otherschema.<limbo>(param=<<parameter>>)}[{<limboval>}]
+menu.{otherschema.<limbo>(param=<<parameter>>)}[{<limboval>}].nesteable
+{otherschema.<limbo>(param=menu.id.<schema>)}
+[{otherschema.<limbo>(param=menu.id.<schema>)}]

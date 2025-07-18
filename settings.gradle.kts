@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 }
 
 include(":core")
+include(":tokenizer")
 val apiDest = file("../polyfill/library")
 if (apiDest.exists()) {
     include("polyfill")

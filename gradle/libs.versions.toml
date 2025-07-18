@@ -7,6 +7,7 @@ android-minSdk = "24"
 android-compileSdk = "35"
 appcompat = "1.7.1"
 appUpdate = "2.1.0"
+antlr = "1.0.5"
 browser = "1.8.0"
 coreKtx = "1.16.0"
 dependencyAnalysis = "2.0.1"
@@ -40,6 +41,7 @@ dc-aviator = "1.0.0-SNAPSHOT"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+antlr-runtime = { module = "com.strumenta:antlr-kotlin-runtime", version.ref = "antlr" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
@@ -70,6 +72,7 @@ dc-polyfill = { module = "cloud.mallne.dicentra:polyfill", version.ref = "dc-pol
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
+antlr = { id = "com.strumenta.antlr-kotlin", version.ref = "antlr" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
