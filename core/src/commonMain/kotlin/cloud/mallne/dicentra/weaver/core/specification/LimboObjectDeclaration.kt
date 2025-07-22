@@ -3,6 +3,7 @@ package cloud.mallne.dicentra.weaver.core.specification
 import cloud.mallne.dicentra.weaver.core.specification.compute.ComputationDeclaration
 import cloud.mallne.dicentra.weaver.language.WeaverParser
 import cloud.mallne.dicentra.weaver.language.ast.expressions.PathAccessExpr
+import cloud.mallne.dicentra.weaver.language.ast.expressions.WeaverExpression
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -15,6 +16,5 @@ data class LimboObjectDeclaration(
     val parameters: Map<String, ObjectType> = emptyMap()
 ) {
     @Transient
-    val accessorAst: PathAccessExpr = WeaverParser.parseAccessorWeaverObjectLanguage(accessor)
     val accessorAst: PathAccessExpr = WeaverParser.parseAccessorWeaverObjectLanguage(accessor)
 }

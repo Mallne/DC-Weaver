@@ -5,7 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MapComputationDeclaration(
-    val repeats: String = "{}",
-    val keyLoop: String = "<<index>>",
-    val valueLoop: String = "<<value>>"
-) : ComputationDeclaration(ObjectType.Map)
+    val repeats: String = "|{}|ai|",
+    val keyLoop: String = "{##index##}",
+    val valueLoop: String = "{##value##}"
+) : ComputationDeclaration {
+    override val type: ObjectType = ObjectType.Map
+}

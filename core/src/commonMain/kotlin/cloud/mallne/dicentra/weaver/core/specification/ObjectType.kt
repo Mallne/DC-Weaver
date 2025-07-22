@@ -1,10 +1,10 @@
 package cloud.mallne.dicentra.weaver.core.specification
 
-enum class ObjectType {
+enum class ObjectType(val compound: Boolean = false) {
     Boolean,
     String,
     Number,
-    List,
-    Map,
-    Object,
+    List(true),
+    Map(true),
+    Object(true),
 }

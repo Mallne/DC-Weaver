@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ObjectComputationDeclaration(
-    val nested: List<PropertyDeclaration>? = null,
-) : ComputationDeclaration(ObjectType.Object)
+    val nested: List<PropertyDeclaration>? = null
+) : ComputationDeclaration {
+    override val type: ObjectType = ObjectType.Object
+}
