@@ -1,5 +1,4 @@
 grammar AccessorWeaverObjectLanguage;
-
 import WeaverObjectNotation;
 // Parser Rules
 // -----------------------------------------------------------------------------

@@ -1,14 +1,16 @@
 grammar WeaverObjectNotation;
 
+import WeaverTokens;
+
 // This rule defines the content that appears *inside* the curly braces {}
 // It contains the "bare" Weaver-specific syntax components.
 weaverContent
     : schemaPath                 #SchemaCallContent           // e.g., otherschema, otherschema.nested
-    | LT IDENTIFIER GT           #LimboObjectCallContent      // e.g., <menuKey>
-    | schemaPath DOT LT IDENTIFIER GT #LimboObjectSchemaCallContent // e.g., otherschema.<menuKey>
-    | LT LT IDENTIFIER GT GT     #ParameterAccessContent      // e.g., <<param>>
-    | LT IDENTIFIER GT OPEN_PAREN parameterList CLOSE_PAREN #LimboObjectCallWithParametersContent // e.g., <menuKey>(param=value)
-    | schemaPath DOT LT IDENTIFIER GT OPEN_PAREN parameterList CLOSE_PAREN #LimboObjectSchemaCallWithParametersContent // e.g., otherschema.<menuKey>(param=value)
+    | HASH IDENTIFIER HASH           #LimboObjectCallContent      // e.g., <menuKey>
+    | schemaPath DOT HASH IDENTIFIER HASH #LimboObjectSchemaCallContent // e.g., otherschema.<menuKey>
+    | HASH HASH IDENTIFIER HASH HASH     #ParameterAccessContent      // e.g., <<param>>
+    | HASH IDENTIFIER HASH OPEN_PAREN parameterList CLOSE_PAREN #LimboObjectCallWithParametersContent // e.g., <menuKey>(param=value)
+    | schemaPath DOT HASH IDENTIFIER HASH OPEN_PAREN parameterList CLOSE_PAREN #LimboObjectSchemaCallWithParametersContent // e.g., otherschema.<menuKey>(param=value)
     | coercionPart #TypeCoercionWrapper
     ;
 
@@ -30,22 +32,3 @@ parameter
 coercionPart
     : PIPE weaverContent PIPE IDENTIFIER PIPE
     ;
-
-// Lexer Rules
-// -----------------------------------------------------------------------------
-IDENTIFIER      : [a-zA-Z_][a-zA-Z0-9_]* ;
-NUMBER          : [0-9]+ ;
-DOT             : '.' ;
-OPEN_BRACE      : '{' ;
-CLOSE_BRACE     : '}' ;
-LT              : '<' ;
-GT              : '>' ;
-OPEN_PAREN      : '(' ;
-CLOSE_PAREN     : ')' ;
-EQ              : '=' ;
-PIPE            : '|' ;
-OPEN_BRACKET    : '[' ;
-CLOSE_BRACKET   : ']' ;
-COMMA           : ',' ;
-
-WS              : [ \t\r\n]+ -> skip;

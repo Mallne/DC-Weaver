@@ -37,6 +37,7 @@ kotlin {
                 } else {
                     implementation(libs.dc.polyfill)
                 }
+                api(project(":tokenizer"))
             }
         }
     }

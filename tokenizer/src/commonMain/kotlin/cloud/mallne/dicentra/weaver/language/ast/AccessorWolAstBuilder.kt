@@ -85,13 +85,13 @@ class AccessorWolAstBuilder : AccessorWeaverObjectLanguageBaseVisitor<WeaverExpr
         return LimboObjectCallContent(schemaPath, key, parameters)
     }
 
-    override fun visitTypeCoercionWrapper(ctx: AccessorWeaverObjectLanguageParser.TypeCoercionWrapperContext): TypeCoercionWrapper {
+    override fun visitTypeCoercionWrapper(ctx: AccessorWeaverObjectLanguageParser.TypeCoercionWrapperContext): AccessorTypeCoercion {
         val content = visitCoercionPart(ctx.coercionPart()).content // Visit inner content from coercionPart
-        val targetType = visitCoercionPart(ctx.coercionPart()).targetType
-        return TypeCoercionWrapper(content, targetType)
+        val targetType = visitCoercionPart(ctx.coercionPart()).type
+        return AccessorTypeCoercion(content, targetType)
     }
 
-    override fun visitCoercionPart(ctx: AccessorWeaverObjectLanguageParser.CoercionPartContext): TypeCoercionWrapper {
+    override fun visitCoercionPart(ctx: AccessorWeaverObjectLanguageParser.CoercionPartContext): AccessorTypeCoercion {
         val content = visit(ctx.weaverContent()) as WeaverContent
         val type = ctx.IDENTIFIER().text
         // Return a temporary wrapper, this visitCoercionPart might be directly called
@@ -100,7 +100,7 @@ class AccessorWolAstBuilder : AccessorWeaverObjectLanguageBaseVisitor<WeaverExpr
         // For now, we'll return a simple object for the delegate to pick up,
         // or directly build TypeCoercionWrapper in visitTypeCoercionWrapper.
         // Let's refine visitTypeCoercionWrapper's logic slightly.
-        return TypeCoercionWrapper(content, type) // Direct construction here is fine.
+        return AccessorTypeCoercion(content, type) // Direct construction here is fine.
     }
 
     override fun visitParameter(ctx: AccessorWeaverObjectLanguageParser.ParameterContext): Parameter {

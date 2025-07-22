@@ -1,13 +1,6 @@
 package cloud.mallne.dicentra.weaver.language.ast
 
-import cloud.mallne.dicentra.weaver.language.ast.expressions.LimboObjectCallContent
-import cloud.mallne.dicentra.weaver.language.ast.expressions.Parameter
-import cloud.mallne.dicentra.weaver.language.ast.expressions.ParameterAccessContent
-import cloud.mallne.dicentra.weaver.language.ast.expressions.ParameterList
-import cloud.mallne.dicentra.weaver.language.ast.expressions.SchemaPathContent
-import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercionWrapper
-import cloud.mallne.dicentra.weaver.language.ast.expressions.WeaverContent
-import cloud.mallne.dicentra.weaver.language.ast.expressions.WeaverExpression
+import cloud.mallne.dicentra.weaver.language.ast.expressions.*
 import cloud.mallne.dicentra.weaver.language.generated.WeaverObjectNotationBaseVisitor
 import cloud.mallne.dicentra.weaver.language.generated.WeaverObjectNotationParser
 
@@ -54,13 +47,13 @@ class WeaverObjectNotationAstBuilder : WeaverObjectNotationBaseVisitor<WeaverExp
         return LimboObjectCallContent(schemaPath, key, parameters)
     }
 
-    override fun visitTypeCoercionWrapper(ctx: WeaverObjectNotationParser.TypeCoercionWrapperContext): TypeCoercionWrapper {
+    override fun visitTypeCoercionWrapper(ctx: WeaverObjectNotationParser.TypeCoercionWrapperContext): AccessorTypeCoercion {
         val content = visitCoercionPart(ctx.coercionPart()).content // Visit inner content from coercionPart
-        val targetType = visitCoercionPart(ctx.coercionPart()).targetType
-        return TypeCoercionWrapper(content, targetType)
+        val targetType = visitCoercionPart(ctx.coercionPart()).type
+        return AccessorTypeCoercion(content, targetType)
     }
 
-    override fun visitCoercionPart(ctx: WeaverObjectNotationParser.CoercionPartContext): TypeCoercionWrapper {
+    override fun visitCoercionPart(ctx: WeaverObjectNotationParser.CoercionPartContext): AccessorTypeCoercion {
         val content = visit(ctx.weaverContent()) as WeaverContent
         val type = ctx.IDENTIFIER().text
         // Return a temporary wrapper, this visitCoercionPart might be directly called
@@ -69,7 +62,7 @@ class WeaverObjectNotationAstBuilder : WeaverObjectNotationBaseVisitor<WeaverExp
         // For now, we'll return a simple object for the delegate to pick up,
         // or directly build TypeCoercionWrapper in visitTypeCoercionWrapper.
         // Let's refine visitTypeCoercionWrapper's logic slightly.
-        return TypeCoercionWrapper(content, type) // Direct construction here is fine.
+        return AccessorTypeCoercion(content, type) // Direct construction here is fine.
     }
 
     override fun visitParameter(ctx: WeaverObjectNotationParser.ParameterContext): Parameter {

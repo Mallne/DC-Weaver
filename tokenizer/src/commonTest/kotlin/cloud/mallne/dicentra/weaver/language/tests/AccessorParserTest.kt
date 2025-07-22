@@ -5,7 +5,7 @@ import cloud.mallne.dicentra.weaver.language.ast.expressions.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParserTest {
+class AccessorParserTest {
     @Test
     fun testSimpleDotPath() {
         val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.id")
@@ -106,7 +106,7 @@ class ParserTest {
 
     @Test
     fun testLimboObjectInterpolation() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{<menuKey>}")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{#menuKey#}")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -127,7 +127,7 @@ class ParserTest {
 
     @Test
     fun testLimboObjectSchemaInterpolation() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{otherSchema.<menuKey>}")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{otherSchema.#menuKey#}")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -151,7 +151,7 @@ class ParserTest {
 
     @Test
     fun testParameterAccess() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{<<param>>}")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{##param##}")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -172,7 +172,7 @@ class ParserTest {
 
     @Test
     fun testLimboObjectWithParameters() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{<menuKey>(param=<menuValue>)}")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{#menuKey#(param=#menuValue#)}")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -225,7 +225,7 @@ class ParserTest {
 
     @Test
     fun testArrayIndexDynamic() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.popup.menuitem[{<indexvalue>}]")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.popup.menuitem[{#indexvalue#}]")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -249,7 +249,7 @@ class ParserTest {
 
     @Test
     fun testArrayIndexTypeCoercion() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.popup.menuitem[{|<indexvalue>|i|}]")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.popup.menuitem[{|#indexvalue#|i|}]")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -262,7 +262,7 @@ class ParserTest {
                     PathElement(
                         PathSegment(listOf(IdentifierInterpolation("menuitem"))),
                         arrayAccess = ComputedArrayIndexExpr(
-                            TypeCoercionWrapper(
+                            AccessorTypeCoercion(
                                 LimboObjectCallContent(limboObject = "indexvalue"),
                                 "i"
                             )
@@ -276,7 +276,7 @@ class ParserTest {
 
     @Test
     fun testComplexPathWithParam() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.nested}.menuitem[{<<param>>}]")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.nested}.menuitem[{##param##}]")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -306,7 +306,7 @@ class ParserTest {
 
     @Test
     fun testParameterAccessWithPath() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{<<param>>}.menu.nested")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{##param##}.menu.nested")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -334,7 +334,7 @@ class ParserTest {
     @Test
     fun testComplexSchemaAccessWithParam() {
         val result =
-            WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.<limbo>(param=<<parameter>>)}[{<limboval>}]")
+            WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.#limbo#(param=##parameter##)}[{#limboval#}]")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -370,7 +370,7 @@ class ParserTest {
     @Test
     fun testNestedComplexAccess() {
         val result =
-            WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.<limbo>(param=<<parameter>>)}[{<limboval>}].nesteable")
+            WeaverParser.parseAccessorWeaverObjectLanguage("menu.{otherschema.#limbo#(param=##parameter##)}[{#limboval#}].nesteable")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -408,7 +408,7 @@ class ParserTest {
 
     @Test
     fun testNestedParameterAccess() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{otherschema.<limbo>(param=menu.id.<schema>)}")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("{otherschema.#limbo#(param=menu.id.#schema#)}")
         assertEquals(
             PathAccessExpr(
                 listOf(
@@ -443,7 +443,7 @@ class ParserTest {
 
     @Test
     fun testArrayInterpolation() {
-        val result = WeaverParser.parseAccessorWeaverObjectLanguage("[{otherschema.<limbo>(param=menu.id.<schema>)}]")
+        val result = WeaverParser.parseAccessorWeaverObjectLanguage("[{otherschema.#limbo#(param=menu.id.#schema#)}]")
         assertEquals(
             PathAccessExpr(
                 listOf(
