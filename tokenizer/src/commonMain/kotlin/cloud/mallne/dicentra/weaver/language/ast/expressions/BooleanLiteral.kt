@@ -1,3 +1,3 @@
 package cloud.mallne.dicentra.weaver.language.ast.expressions
 
-data class BooleanLiteral(val value: Boolean) : Literal
+data class BooleanLiteral(override val value: Boolean) : Literal<Boolean>, TopLevelWeaverExpression

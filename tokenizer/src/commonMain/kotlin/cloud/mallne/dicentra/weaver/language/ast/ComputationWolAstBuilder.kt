@@ -10,6 +10,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
     override fun visitStringLiteral(ctx: ComputationNotationParser.StringLiteralContext): StringLiteral {
         return StringLiteral(ctx.STRING_LITERAL().text.removePrefix("\"").removeSuffix("\""))
     }
+
     override fun visitSStringLiteral(ctx: ComputationNotationParser.SStringLiteralContext): StringLiteral {
         return StringLiteral(ctx.SSTRING_LITERAL().text.removePrefix("\'").removeSuffix("\'"))
     }
@@ -65,7 +66,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
     }
 
     override fun visitParenBaseComputationExpr(ctx: ComputationNotationParser.ParenBaseComputationExprContext): NestedExpression {
-        return NestedExpression(visit(ctx.baseComputationExpression()))
+        return NestedExpression(visit(ctx.baseComputationExpression()) as TopLevelWeaverExpression)
     }
 
     override fun visitAccessorAccessExpr(ctx: ComputationNotationParser.AccessorAccessExprContext): WeaverContent {
@@ -85,9 +86,9 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
 
     override fun visitFullTernary(ctx: ComputationNotationParser.FullTernaryContext): TernaryExpression {
         return TernaryExpression(
-            visit(ctx.condition!!),
-            trueBranch = visit(ctx.trueBranch!!),
-            falseBranch = visit(ctx.falseBranch!!)
+            visit(ctx.condition!!) as TopLevelWeaverExpression,
+            trueBranch = visit(ctx.trueBranch!!) as TopLevelWeaverExpression,
+            falseBranch = visit(ctx.falseBranch!!) as TopLevelWeaverExpression
         )
     }
 
@@ -98,12 +99,12 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
                 content = valueContent,
                 type = TypeCoercion.Type.AvailabilityBoolean
             ),
-            trueBranch = valueContent,
-            falseBranch = visit(ctx.other!!)
+            trueBranch = valueContent as TopLevelWeaverExpression,
+            falseBranch = visit(ctx.other!!) as TopLevelWeaverExpression
         )
     }
 
-    override fun visitCurrentAccessorExpr(ctx: ComputationNotationParser.CurrentAccessorExprContext): WeaverContent {
+    override fun visitCurrentAccessorExpr(ctx: ComputationNotationParser.CurrentAccessorExprContext): CurrentAccessor {
         return CurrentAccessor
     }
 

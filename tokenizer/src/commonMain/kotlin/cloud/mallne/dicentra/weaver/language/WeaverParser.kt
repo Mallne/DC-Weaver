@@ -3,7 +3,10 @@ package cloud.mallne.dicentra.weaver.language
 import cloud.mallne.dicentra.weaver.language.ast.AccessorWolAstBuilder
 import cloud.mallne.dicentra.weaver.language.ast.ComputationWolAstBuilder
 import cloud.mallne.dicentra.weaver.language.ast.WeaverObjectNotationAstBuilder
+import cloud.mallne.dicentra.weaver.language.ast.expressions.CurrentAccessor
 import cloud.mallne.dicentra.weaver.language.ast.expressions.PathAccessExpr
+import cloud.mallne.dicentra.weaver.language.ast.expressions.TopLevelWeaverExpression
+import cloud.mallne.dicentra.weaver.language.ast.expressions.WeaverContent
 import cloud.mallne.dicentra.weaver.language.ast.expressions.WeaverExpression
 import cloud.mallne.dicentra.weaver.language.generated.AccessorWeaverObjectLanguageLexer
 import cloud.mallne.dicentra.weaver.language.generated.AccessorWeaverObjectLanguageParser
@@ -61,7 +64,7 @@ object WeaverParser {
         }
     }
 
-    fun parseComputationWeaverObjectLanguage(contents: String): WeaverExpression {
+    fun parseComputationWeaverObjectLanguage(contents: String): TopLevelWeaverExpression {
         val charStream = CharStreams.fromString(contents)
         val lexer = ComputationNotationLexer(charStream)
         lexer.removeErrorListeners() // Remove default console error logging from lexer
@@ -78,7 +81,7 @@ object WeaverParser {
             val astBuilder = ComputationWolAstBuilder()
 
             // The visit method now returns a non-nullable AccessorExpression or throws an exception.
-            val ast = astBuilder.visit(parseTree)
+            val ast = astBuilder.visit(parseTree) as TopLevelWeaverExpression
 
             return ast // Directly return the non-nullable AST
 
@@ -107,7 +110,7 @@ object WeaverParser {
     /**
      * You most likely won't want to call this directly
      */
-    fun parseWeaverObjectNotation(contents: String): PathAccessExpr {
+    fun parseWeaverObjectNotation(contents: String): WeaverContent {
         val charStream = CharStreams.fromString(contents)
         val lexer = WeaverObjectNotationLexer(charStream)
         lexer.removeErrorListeners() // Remove default console error logging from lexer
@@ -124,7 +127,7 @@ object WeaverParser {
             val astBuilder = WeaverObjectNotationAstBuilder()
 
             // The visit method now returns a non-nullable AccessorExpression or throws an exception.
-            val ast = astBuilder.visit(parseTree) as PathAccessExpr
+            val ast = astBuilder.visit(parseTree) as WeaverContent
 
             return ast // Directly return the non-nullable AST
 
