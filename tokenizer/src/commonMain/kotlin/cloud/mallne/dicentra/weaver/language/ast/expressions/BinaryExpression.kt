@@ -1,4 +1,4 @@
 package cloud.mallne.dicentra.weaver.language.ast.expressions
 
-data class BinaryExpression(val left: WeaverExpression, val operator: BinaryOperator, val right: WeaverExpression) :
+data class BinaryExpression(val left: TopLevelWeaverExpression, val operator: BinaryOperator, val right: TopLevelWeaverExpression) :
     TopLevelWeaverExpression

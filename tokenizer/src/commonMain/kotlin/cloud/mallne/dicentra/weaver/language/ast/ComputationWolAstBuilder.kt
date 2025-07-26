@@ -27,8 +27,8 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
     // Operators
     override fun visitEqualityOperatorExpr(ctx: ComputationNotationParser.EqualityOperatorExprContext): BinaryExpression {
         return BinaryExpression(
-            left = visit(ctx.first!!),
-            right = visit(ctx.second!!),
+            left = visit(ctx.first!!) as TopLevelWeaverExpression,
+            right = visit(ctx.second!!) as TopLevelWeaverExpression,
             operator = EqualityOperator.Companion.byValue(ctx.EQUALITY_OPERATIONS().text)
                 ?: throw IllegalArgumentException("equality operator expression expected")
         )
@@ -36,8 +36,8 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
 
     override fun visitBooleanOperatorExpr(ctx: ComputationNotationParser.BooleanOperatorExprContext): BinaryExpression {
         return BinaryExpression(
-            left = visit(ctx.first!!),
-            right = visit(ctx.second!!),
+            left = visit(ctx.first!!) as TopLevelWeaverExpression,
+            right = visit(ctx.second!!) as TopLevelWeaverExpression,
             operator = BooleanOperator.Companion.byValue(ctx.BOOLEAN_OPERATIONS().text)
                 ?: throw IllegalArgumentException("boolean operator expression expected")
         )
@@ -45,8 +45,8 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
 
     override fun visitArithmeticOperatorExpr(ctx: ComputationNotationParser.ArithmeticOperatorExprContext): BinaryExpression {
         return BinaryExpression(
-            left = visit(ctx.first!!),
-            right = visit(ctx.second!!),
+            left = visit(ctx.first!!) as TopLevelWeaverExpression,
+            right = visit(ctx.second!!) as TopLevelWeaverExpression,
             operator = ArithmeticOperator.Companion.byValue(ctx.ARITHMETIC_OPERATIONS().text)
                 ?: throw IllegalArgumentException("arithmetic operator expression expected")
         )
@@ -62,7 +62,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
     }
 
     override fun visitFunctionParameterList(ctx: ComputationNotationParser.FunctionParameterListContext): UnnamedParameterList {
-        return UnnamedParameterList(ctx.baseComputationExpression().map { visit(it) })
+        return UnnamedParameterList(ctx.baseComputationExpression().map { visit(it) as TopLevelWeaverExpression })
     }
 
     override fun visitParenBaseComputationExpr(ctx: ComputationNotationParser.ParenBaseComputationExprContext): NestedExpression {
@@ -74,7 +74,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
     }
 
     override fun visitNegatedCompute(ctx: ComputationNotationParser.NegatedComputeContext): UnaryExpression {
-        return UnaryExpression(ctx.BANG().text, visit(ctx.baseComputationExpression()))
+        return UnaryExpression(ctx.BANG().text, visit(ctx.baseComputationExpression()) as TopLevelWeaverExpression)
     }
 
     override fun visitTopLevelCoercion(ctx: ComputationNotationParser.TopLevelCoercionContext): TopLevelTypeCoercion {

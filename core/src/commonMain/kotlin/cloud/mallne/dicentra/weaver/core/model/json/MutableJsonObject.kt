@@ -8,11 +8,27 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonObject
+import kotlin.text.append
 
 @Serializable(with = MutableJsonObject.Companion.Serializer::class)
 class MutableJsonObject(
     val value: MutableMap<String, MutableJson>
 ) : MutableJson, MutableMap<String, MutableJson> by value {
+
+    override fun toString(): String {
+        return value.entries.joinToString(
+            separator = ",",
+            prefix = "{",
+            postfix = "}",
+            transform = { (k, v) ->
+                buildString {
+                    printQuoted(k)
+                    append(':')
+                    append(v)
+                }
+            }
+        )
+    }
     companion object {
         object Serializer : KSerializer<MutableJsonObject> {
             override val descriptor: SerialDescriptor

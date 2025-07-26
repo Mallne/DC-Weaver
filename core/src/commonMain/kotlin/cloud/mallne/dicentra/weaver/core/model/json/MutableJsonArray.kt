@@ -12,6 +12,9 @@ import kotlinx.serialization.json.JsonArray
 class MutableJsonArray(
     val value: MutableList<MutableJson>
 ) : MutableJson, MutableList<MutableJson> by value {
+    override fun toString(): String =
+        value.joinToString(prefix = "[", postfix = "]", separator = ",")
+
     companion object {
         object Serializer : KSerializer<MutableJsonArray> {
             override val descriptor: SerialDescriptor

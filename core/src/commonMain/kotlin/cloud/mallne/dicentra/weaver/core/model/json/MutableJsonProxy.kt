@@ -11,6 +11,7 @@ import kotlinx.serialization.json.JsonElement
 class MutableJsonProxy(
     var value: JsonElement
 ) : MutableJson {
+    override fun toString(): String = value.toString()
     companion object {
         object Serializer : KSerializer<MutableJsonProxy> {
             override val descriptor: SerialDescriptor
