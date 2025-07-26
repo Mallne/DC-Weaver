@@ -1,16 +1,45 @@
 package cloud.mallne.dicentra.weaver.core.model.json
 
+import cloud.mallne.dicentra.weaver.core.specification.ObjectType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.*
 
 @Serializable
 sealed interface MutableJson {
+    fun type(): ObjectType
+
+    fun asListOrNull(): MutableList<MutableJson>? {
+        return when (this) {
+            is MutableJsonArray -> value
+            is MutableJsonProxy -> (value as? JsonArray)?.let { MutableJsonArray.of(it) }
+            else -> null
+        }
+    }
+
+    fun asMapOrNull(): MutableMap<String, MutableJson>? {
+        return when (this) {
+            is MutableJsonObject -> value
+            is MutableJsonProxy -> (value as? JsonObject)?.let { MutableJsonObject.of(it) }
+            else -> null
+        }
+    }
+
+    fun asBooleanOrNull(): Boolean? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.booleanOrNull
+    fun asNumberOrNull(): Number? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.floatOrNull
+        ?: (this as? MutableJsonProxy)?.value?.jsonPrimitive?.doubleOrNull
+        ?: (this as? MutableJsonProxy)?.value?.jsonPrimitive?.longOrNull
+
+    fun asIntOrNull(): Int? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.intOrNull
+    fun asDoubleOrNull(): Double? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.doubleOrNull
+    fun asFloatOrNull(): Float? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.floatOrNull
+    fun asLongOrNull(): Long? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.longOrNull
+
+    fun asStringOrNull(): String? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.content
+
     companion object {
         object Serializer : KSerializer<MutableJson> {
             override val descriptor: SerialDescriptor = SerialDescriptor(

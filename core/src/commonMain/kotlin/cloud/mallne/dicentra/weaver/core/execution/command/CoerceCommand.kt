@@ -33,6 +33,25 @@ object CoerceCommand : WeaverCommand {
         context.put(Keys.yield, yield)
     }
 
+    fun thisCommand(
+        dispatcher: CommandDispatcher,
+        context: WeaverContext,
+        input: MutableJson,
+        type: TypeCoercion.Type
+    ): MutableJsonProxy {
+        val resCoerce = dispatcher.dispatch(
+            CoerceCommand.NAME,
+            context,
+            CoerceCommand.Keys.input.holder(input),
+            CoerceCommand.Keys.coerceTo.holder(type),
+        )
+        return if (resCoerce is CommandDispatcher.Result.Failure) {
+            throw resCoerce.throwable
+        } else {
+            context.get(CoerceCommand.Keys.yield)
+        }
+    }
+
     private fun integerCoercion(input: MutableJson): MutableJsonProxy {
         return when (input) {
             is MutableJsonArray -> MutableJsonNumber(0)

@@ -6,6 +6,7 @@ enum class ObjectType(val compound: Boolean = false) {
     Boolean,
     String,
     Number,
+    Undefined,
     List(true),
     Map(true),
     Object(true);
