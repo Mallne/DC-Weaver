@@ -7,7 +7,6 @@ import cloud.mallne.dicentra.weaver.core.model.plugins.WeaverPluginInstance
 class LoggingPluginInstance(
     override val configurationBundle: LoggingPluginConfig,
     override val identity: String,
-    override val reconfigure: WeaverEngineConfiguration.() -> Unit = {},
 ) : WeaverPluginInstance {
     override fun rewriteContext(context: WeaverContext): WeaverContext {
         return context.copy(

@@ -1,6 +1,6 @@
 package cloud.mallne.dicentra.weaver.core.model.functions
 
 interface WeaverFunction<ConfigScope : WeaverFunctionConfigScope> {
-    val identity: String
+    val name: String
     fun install(config: ConfigScope.() -> Unit): WeaverFunctionInstance
 }

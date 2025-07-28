@@ -7,5 +7,7 @@ interface WeaverPluginInstance {
     val configurationBundle: WeaverPluginConfigScope
     val identity: String
     val reconfigure: WeaverEngineConfiguration.() -> Unit
-    fun rewriteContext(context: WeaverContext): WeaverContext
+        get() = {}
+
+    fun rewriteContext(context: WeaverContext): WeaverContext = context
 }

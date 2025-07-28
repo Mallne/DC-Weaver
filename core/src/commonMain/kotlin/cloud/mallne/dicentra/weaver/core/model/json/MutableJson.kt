@@ -89,6 +89,20 @@ sealed interface MutableJson : Comparable<MutableJson> {
         }
     }
 
+    fun toStable(): JsonElement {
+         return when (this) {
+            is MutableJsonObject -> {
+                JsonObject(this.map { it.key to it.value.toStable() }.toMap())
+            }
+            is MutableJsonArray -> {
+                JsonArray(this.map { it.toStable() })
+            }
+            is MutableJsonProxy -> {
+                this.value
+            }
+        }
+    }
+
     companion object {
         object Serializer : KSerializer<MutableJson> {
             override val descriptor: SerialDescriptor = SerialDescriptor(
