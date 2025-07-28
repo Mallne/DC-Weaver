@@ -2,7 +2,7 @@ package cloud.mallne.dicentra.weaver.core.model
 
 import cloud.mallne.dicentra.weaver.exceptions.WeaverComputationException
 
-class CommandDispatcher(
+data class CommandDispatcher(
     private val commands: Map<String, WeaverCommand> = emptyMap()
 ) : Map<String, WeaverCommand> by commands {
     fun dispatch(name: String, context: WeaverContext, vararg inputs: WeaverCommandKey.DataHolder<*>): Result {
