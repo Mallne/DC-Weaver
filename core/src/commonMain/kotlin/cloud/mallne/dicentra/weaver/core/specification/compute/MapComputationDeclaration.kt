@@ -7,12 +7,15 @@ import kotlinx.serialization.Transient
 
 @Serializable
 data class MapComputationDeclaration(
-    val repeats: String = "|{}|ai|",
-    val keyLoop: String = "{##index##}",
-    val valueLoop: String = "{##value##}"
+    val loop: String = "|{}|ai|",
+    val keyRepeat: String = "{##index##}",
+    val valueRepeat: String = "{##value##}"
 ) : ComputationDeclaration {
     override val type: ObjectType = ObjectType.Map
-    @Transient val repeatsAst = WeaverParser.parseComputationWeaverObjectLanguage(repeats)
-    @Transient val keyLoopAst = WeaverParser.parseComputationWeaverObjectLanguage(keyLoop)
-    @Transient val valueLoopAst = WeaverParser.parseComputationWeaverObjectLanguage(valueLoop)
+    @Transient
+    val loopAst = WeaverParser.parseComputationWeaverObjectLanguage(loop)
+    @Transient
+    val keyRepeatAst = WeaverParser.parseComputationWeaverObjectLanguage(keyRepeat)
+    @Transient
+    val valueRepeatAst = WeaverParser.parseComputationWeaverObjectLanguage(valueRepeat)
 }

@@ -1,286 +1,37 @@
 package cloud.mallne.dicentra.weaver.core.execution.command
 
 import cloud.mallne.dicentra.weaver.core.model.*
-import cloud.mallne.dicentra.weaver.core.model.json.*
-import cloud.mallne.dicentra.weaver.core.specification.ObjectType
-import cloud.mallne.dicentra.weaver.language.ast.expressions.ArithmeticOperator
+import cloud.mallne.dicentra.weaver.core.model.json.MutableJson
 import cloud.mallne.dicentra.weaver.language.ast.expressions.EqualityOperator
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TopLevelWeaverExpression
-import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
 import kotlinx.serialization.json.JsonElement
 
-object EqualityOperatorCommand : WeaverCommand {
-    const val NAME = "EqualityOperatorCommand"
+object EqualityOperatorCommand : ConvenientWeaverCommand {
+    override val name = "EqualityOperatorCommand"
 
     object Keys {
-        val left = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.left")
-        val right = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.right")
-        val operator = WeaverCommandKey(EqualityOperator::class, "Operator")
-        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, "Notation")
-        val input = WeaverCommandKey(JsonElement::class, CommonScopeKeys.INPUT_ELEMENT)
-        val yield = WeaverCommandKey(MutableJson::class, CommonScopeKeys.OUTPUT_MUTABLE_ELEMENT)
+        val left = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.LEFT_EXPRESSION)
+        val right = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.RIGHT_EXPRESSION)
+        val operator = WeaverCommandKey(EqualityOperator::class, CommonCommands.ScopeKeys.OPERATOR)
+        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, CommonCommands.ScopeKeys.NOTATION)
+        val input = WeaverCommandKey(JsonElement::class, CommonCommands.ScopeKeys.INPUT_ELEMENT)
+        val yield = WeaverCommandKey(Boolean::class, CommonCommands.ScopeKeys.OUTPUT_MUTABLE_ELEMENT)
     }
 
-
-    private fun forPlus(
+    private fun compareContents(
         left: MutableJson,
         right: MutableJson,
-        dispatcher: CommandDispatcher,
-        context: WeaverContext
-    ): MutableJson {
-        val sourceType = right.type()
-        val leftType = left.type()
-        return when (leftType) {
-            ObjectType.String -> {
-                MutableJsonString(left.toString() + right.toString())
-            } // Anything can become a string for '+'
-            ObjectType.Number -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Number -> {
-                        val sum = right.asFloatOrNull()?.let { left.asFloatOrNull()?.plus(it) }
-                        MutableJsonNumber(sum ?: Double.NaN)
-                    }
-
-                    else -> {
-                        val coerced = CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Float)
-                        val sum = coerced.asFloatOrNull()?.let { left.asFloatOrNull()?.plus(it) }
-                        MutableJsonNumber(sum ?: Double.NaN)
-                    }
-
-                }
-            }
-
-            ObjectType.Boolean -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Boolean -> {
-                        val sum = right.asBooleanOrNull()?.let { left.asBooleanOrNull()?.and(it) }
-                        MutableJsonBoolean(sum == true)
-                    }
-
-                    else -> {
-                        val coerced = CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Boolean)
-                        val sum = coerced.asBooleanOrNull()?.let { left.asBooleanOrNull()?.and(it) }
-                        MutableJsonBoolean(sum == true)
-                    }
-                }
-            }
-
-            ObjectType.List -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.List -> {
-                        val sum = right.asListOrNull()?.let { left.asListOrNull()?.plus(it) }?.toMutableList()
-                        MutableJsonArray(sum ?: mutableListOf())
-                    }
-
-                    else -> {
-                        val list = left.asListOrNull()
-                        list?.add(right)
-                        MutableJsonArray(list ?: mutableListOf())
-                    }
-                }
-            }
-
-            ObjectType.Map,
-            ObjectType.Object -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Map,
-                    ObjectType.Object -> {
-                        val sum = right.asMapOrNull()?.let { left.asMapOrNull()?.plus(it) }?.toMutableMap()
-                        MutableJsonObject(sum ?: mutableMapOf())
-                    }
-
-                    ObjectType.List -> {
-                        val sum = right.asListOrNull()?.let {
-                            left.asMapOrNull()?.plus(it.mapIndexed { i, v -> "$i" to v }.toMap())
-                        }?.toMutableMap()
-                        MutableJsonObject(sum ?: mutableMapOf())
-                    }
-
-                    else -> {
-                        val map = left.asMapOrNull()
-                        map?.put(sourceType.name, right)
-                        MutableJsonObject(map ?: mutableMapOf())
-                    }
-                }
-            }
-
-            ObjectType.Undefined -> when (sourceType) {
-                ObjectType.Undefined -> MutableJsonNull()
-                else -> right
-            }
+        operator: EqualityOperator,
+    ): Boolean {
+        val cmp = left.compareTo(right)
+        return when (operator) {
+            EqualityOperator.EQUAL -> cmp == 0
+            EqualityOperator.NOT_EQUAL -> cmp != 0
+            EqualityOperator.LTE -> cmp <= 0
+            EqualityOperator.GTE -> cmp >= 0
+            EqualityOperator.LT -> cmp < 0
+            EqualityOperator.GT -> cmp > 0
         }
-    }
-
-    private fun forMinus(
-        left: MutableJson,
-        right: MutableJson,
-        dispatcher: CommandDispatcher,
-        context: WeaverContext
-    ): MutableJson {
-        val sourceType = right.type()
-        val leftType = left.type()
-        return when (leftType) {
-            ObjectType.String -> {
-                MutableJsonString(left.toString().replace(right.toString(), ""))
-            } // Anything can become a string for '+'
-            ObjectType.Number -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Number -> {
-                        val sum = right.asFloatOrNull()?.let { left.asFloatOrNull()?.minus(it) }
-                        MutableJsonNumber(sum ?: Double.NaN)
-                    }
-
-                    else -> {
-                        val coerced = CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Float)
-                        val sum = coerced.asFloatOrNull()?.let { left.asFloatOrNull()?.minus(it) }
-                        MutableJsonNumber(sum ?: Double.NaN)
-                    }
-
-                }
-            }
-
-            ObjectType.Boolean -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Boolean -> {
-                        val sum = right.asBooleanOrNull()?.let { left.asBooleanOrNull()?.or(it) }
-                        MutableJsonBoolean(sum == true)
-                    }
-
-                    else -> {
-                        val coerced = CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Boolean)
-                        val sum = coerced.asBooleanOrNull()?.let { left.asBooleanOrNull()?.or(it) }
-                        MutableJsonBoolean(sum == true)
-                    }
-                }
-            }
-
-            ObjectType.List -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.List -> {
-                        val sum = right.asListOrNull()?.let { left.asListOrNull()?.minus(it) }?.toMutableList()
-                        MutableJsonArray(sum ?: mutableListOf())
-                    }
-
-                    else -> {
-                        val list = left.asListOrNull()
-                        list?.remove(right)
-                        MutableJsonArray(list ?: mutableListOf())
-                    }
-                }
-            }
-
-            ObjectType.Map,
-            ObjectType.Object -> {
-                when (sourceType) {
-                    ObjectType.Undefined -> left
-                    ObjectType.Map,
-                    ObjectType.Object -> {
-                        val sum =
-                            right.asMapOrNull()?.let { rightMap -> left.asMapOrNull()?.minus(rightMap.map { it.key }) }
-                                ?.toMutableMap()
-                        MutableJsonObject(sum ?: mutableMapOf())
-                    }
-
-                    ObjectType.List -> {
-                        val sum = right.asListOrNull()?.let {
-                            left.asMapOrNull()?.minus(it.map { v -> v.toString() })
-                        }?.toMutableMap()
-                        MutableJsonObject(sum ?: mutableMapOf())
-                    }
-
-                    else -> {
-                        val map = left.asMapOrNull()
-                        map?.remove(right.toString())
-                        MutableJsonObject(map ?: mutableMapOf())
-                    }
-                }
-            }
-
-            ObjectType.Undefined -> when (sourceType) {
-                ObjectType.Undefined -> MutableJsonNull()
-                ObjectType.Number -> right.asFloatOrNull()?.let { MutableJsonNumber(-it) } ?: MutableJsonNull()
-                ObjectType.List -> right.asListOrNull()?.let { MutableJsonArray(it.reversed().toMutableList()) }
-                    ?: MutableJsonNull()
-
-                else -> right
-            }
-        }
-    }
-
-    private fun forMultiply(
-        left: MutableJson,
-        right: MutableJson,
-        dispatcher: CommandDispatcher,
-        context: WeaverContext
-    ): MutableJsonProxy {
-        val sourceType = right.type()
-        val leftType = left.type()
-
-        val safeLeft = if (leftType == ObjectType.Number) {
-            left
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, left, TypeCoercion.Type.Float)
-        }
-        val safeRight = if (sourceType == ObjectType.Number) {
-            right
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Float)
-        }
-        val sum = safeRight.asFloatOrNull()?.let { safeLeft.asFloatOrNull()?.times(it) }
-        return MutableJsonNumber(sum ?: Double.NaN)
-    }
-
-    private fun forDivide(
-        left: MutableJson,
-        right: MutableJson,
-        dispatcher: CommandDispatcher,
-        context: WeaverContext
-    ): MutableJsonProxy {
-        val sourceType = right.type()
-        val leftType = left.type()
-
-        val safeLeft = if (leftType == ObjectType.Number) {
-            left
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, left, TypeCoercion.Type.Float)
-        }
-        val safeRight = if (sourceType == ObjectType.Number) {
-            right
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Float)
-        }
-        val sum = safeRight.asFloatOrNull()?.let { safeLeft.asFloatOrNull()?.div(it) }
-        return MutableJsonNumber(sum ?: Double.NaN)
-    }
-
-    private fun forEqual(
-        left: MutableJson,
-        right: MutableJson,
-        dispatcher: CommandDispatcher,
-        context: WeaverContext
-    ): MutableJsonProxy {
-        val sourceType = right.type()
-        val leftType = left.type()
-
-        val safeLeft = if (leftType == ObjectType.Number) {
-            left
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, left, TypeCoercion.Type.Float)
-        }
-        val safeRight = if (sourceType == ObjectType.Number) {
-            right
-        } else {
-            CoerceCommand.thisCommand(dispatcher, context, right, TypeCoercion.Type.Float)
-        }
-        val sum = safeRight.asFloatOrNull()?.let { safeLeft.asFloatOrNull()?.mod(it) }
-        return MutableJsonNumber(sum ?: Double.NaN)
     }
 
     override fun execute(context: WeaverContext, dispatcher: CommandDispatcher) {
@@ -292,17 +43,8 @@ object EqualityOperatorCommand : WeaverCommand {
 
         val leftRes = WeaverExpressionCommand.thisCommand(dispatcher, context, left, notation, input)
         val rightRes = WeaverExpressionCommand.thisCommand(dispatcher, context, right, notation, input)
-        leftRes.type()
-        rightRes.type()
 
-        val yield = when (operator) {
-            EqualityOperator.EQUAL -> TODO()
-            EqualityOperator.NOT_EQUAL -> TODO()
-            EqualityOperator.LTE -> TODO()
-            EqualityOperator.GTE -> TODO()
-            EqualityOperator.LT -> TODO()
-            EqualityOperator.GT -> TODO()
-        }
+        val yield = compareContents(leftRes, rightRes, operator)
 
         context.put(Keys.yield, yield)
     }
@@ -315,9 +57,9 @@ object EqualityOperatorCommand : WeaverCommand {
         operator: EqualityOperator,
         notation: WeaverObjectNotationInvocation,
         input: JsonElement
-    ): MutableJson {
+    ): Boolean {
         val res = dispatcher.dispatch(
-            NAME,
+            name,
             context,
             Keys.left.holder(left),
             Keys.right.holder(right),

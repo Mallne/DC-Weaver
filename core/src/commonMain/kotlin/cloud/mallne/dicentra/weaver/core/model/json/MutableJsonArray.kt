@@ -12,7 +12,7 @@ import kotlinx.serialization.json.JsonElement
 
 @Serializable(with = MutableJsonArray.Companion.Serializer::class)
 class MutableJsonArray(
-    val value: MutableList<MutableJson>
+    val value: MutableList<MutableJson> = mutableListOf()
 ) : MutableJson, MutableList<MutableJson> by value {
 
     override fun type(): ObjectType = ObjectType.List

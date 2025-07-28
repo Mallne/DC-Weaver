@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 
 @Serializable
-sealed interface MutableJson {
+sealed interface MutableJson : Comparable<MutableJson> {
     fun type(): ObjectType
 
     fun asListOrNull(): MutableList<MutableJson>? {
@@ -38,7 +38,56 @@ sealed interface MutableJson {
     fun asFloatOrNull(): Float? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.floatOrNull
     fun asLongOrNull(): Long? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.longOrNull
 
-    fun asStringOrNull(): String? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.content
+    fun asStringOrNull(): String? =
+        if ((this is MutableJsonProxy) && this.value.jsonPrimitive.isString) (this as? MutableJsonProxy)?.value?.jsonPrimitive?.content else null
+
+    override fun compareTo(other: MutableJson): Int {
+        when {
+            this is MutableJsonObject && other is MutableJsonObject -> {
+                if (this.size != other.size) return this.size.compareTo(other.size)
+                for ((key, value) in this) {
+                    val otherValue = other[key] ?: return 1
+                    val comparison = value.compareTo(otherValue)
+                    if (comparison != 0) return comparison
+                }
+                return 0
+            }
+
+            this is MutableJsonArray && other is MutableJsonArray -> {
+                if (this.size != other.size) return this.size.compareTo(other.size)
+                for (i in this.indices) {
+                    val comparison = this[i].compareTo(other[i])
+                    if (comparison != 0) return comparison
+                }
+                return 0
+            }
+
+            this is MutableJsonProxy && other is MutableJsonProxy -> {
+                return when {
+                    this.value == other.value -> 0
+                    else -> this.value.toString().compareTo(other.value.toString())
+                }
+            }
+
+            this is MutableJsonProxy -> {
+                return when (this.value) {
+                    is JsonObject -> MutableJsonObject.of(this.value as JsonObject).compareTo(other)
+                    is JsonArray -> MutableJsonArray.of(this.value as JsonArray).compareTo(other)
+                    else -> this.value.toString().compareTo(other.toString())
+                }
+            }
+
+            other is MutableJsonProxy -> {
+                return when (other.value) {
+                    is JsonObject -> this.compareTo(MutableJsonObject.of(other.value as JsonObject))
+                    is JsonArray -> this.compareTo(MutableJsonArray.of(other.value as JsonArray))
+                    else -> this.toString().compareTo(other.value.toString())
+                }
+            }
+
+            else -> return this.toString().compareTo(other.toString())
+        }
+    }
 
     companion object {
         object Serializer : KSerializer<MutableJson> {

@@ -1,6 +1,8 @@
 package cloud.mallne.dicentra.weaver.core.execution.command
 
+import cloud.mallne.dicentra.weaver.core.execution.command.CommonCommands.ScopeKeys.COMMONDENOM
 import cloud.mallne.dicentra.weaver.core.model.CommandDispatcher
+import cloud.mallne.dicentra.weaver.core.model.ConvenientWeaverCommand
 import cloud.mallne.dicentra.weaver.core.model.WeaverCommand
 import cloud.mallne.dicentra.weaver.core.model.WeaverCommandKey
 import cloud.mallne.dicentra.weaver.core.model.WeaverContext
@@ -8,13 +10,13 @@ import cloud.mallne.dicentra.weaver.core.model.json.*
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
 import kotlinx.serialization.json.*
 
-object CoerceCommand : WeaverCommand {
-    const val NAME = "CoerceCommand"
+object CoerceCommand : ConvenientWeaverCommand {
+    override val name = "CoerceCommand"
 
     object Keys {
-        val input = WeaverCommandKey(MutableJson::class, CommonScopeKeys.INPUT_MUTABLE_ELEMENT)
-        val coerceTo = WeaverCommandKey(TypeCoercion.Type::class, "TypeCoercion")
-        val yield = WeaverCommandKey(MutableJsonProxy::class, CommonScopeKeys.OUTPUT_MUTABLE_ELEMENT)
+        val input = WeaverCommandKey(MutableJson::class, CommonCommands.ScopeKeys.INPUT_MUTABLE_ELEMENT)
+        val coerceTo = WeaverCommandKey(TypeCoercion.Type::class, COMMONDENOM + "TypeCoercion")
+        val yield = WeaverCommandKey(MutableJsonProxy::class, CommonCommands.ScopeKeys.OUTPUT_MUTABLE_ELEMENT)
     }
 
     override fun execute(context: WeaverContext, dispatcher: CommandDispatcher) {
@@ -40,15 +42,15 @@ object CoerceCommand : WeaverCommand {
         type: TypeCoercion.Type
     ): MutableJsonProxy {
         val resCoerce = dispatcher.dispatch(
-            CoerceCommand.NAME,
+            name,
             context,
-            CoerceCommand.Keys.input.holder(input),
-            CoerceCommand.Keys.coerceTo.holder(type),
+            Keys.input.holder(input),
+            Keys.coerceTo.holder(type),
         )
         return if (resCoerce is CommandDispatcher.Result.Failure) {
             throw resCoerce.throwable
         } else {
-            context.get(CoerceCommand.Keys.yield)
+            context.get(Keys.yield)
         }
     }
 

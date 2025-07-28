@@ -18,6 +18,10 @@ fun MutableJsonString(value: String) = MutableJsonProxy(
     JsonPrimitive(value)
 )
 
+fun MutableJsonChar(value: Char) = MutableJsonProxy(
+    JsonPrimitive(value.toString())
+)
+
 fun MutableJsonNull() = MutableJsonProxy(
     JsonNull
 )

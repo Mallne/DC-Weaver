@@ -12,7 +12,7 @@ import kotlinx.serialization.json.JsonObject
 
 @Serializable(with = MutableJsonObject.Companion.Serializer::class)
 class MutableJsonObject(
-    val value: MutableMap<String, MutableJson>
+    val value: MutableMap<String, MutableJson> = mutableMapOf(),
 ) : MutableJson, MutableMap<String, MutableJson> by value {
     override fun type(): ObjectType = ObjectType.Object
     override fun toString(): String {

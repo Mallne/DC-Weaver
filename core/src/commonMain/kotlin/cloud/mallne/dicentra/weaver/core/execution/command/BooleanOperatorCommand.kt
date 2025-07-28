@@ -7,16 +7,16 @@ import cloud.mallne.dicentra.weaver.language.ast.expressions.BooleanOperator
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TopLevelWeaverExpression
 import kotlinx.serialization.json.JsonElement
 
-object BooleanOperatorCommand : WeaverCommand {
-    const val NAME = "BooleanOperatorCommand"
+object BooleanOperatorCommand : ConvenientWeaverCommand {
+    override val name = "BooleanOperatorCommand"
 
     object Keys {
-        val left = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.left")
-        val right = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.right")
-        val operator = WeaverCommandKey(BooleanOperator::class, "Operator")
-        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, "Notation")
-        val input = WeaverCommandKey(JsonElement::class, CommonScopeKeys.INPUT_ELEMENT)
-        val yield = WeaverCommandKey(MutableJson::class, CommonScopeKeys.OUTPUT_MUTABLE_ELEMENT)
+        val left = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.LEFT_EXPRESSION)
+        val right = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.RIGHT_EXPRESSION)
+        val operator = WeaverCommandKey(BooleanOperator::class, CommonCommands.ScopeKeys.OPERATOR)
+        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, CommonCommands.ScopeKeys.NOTATION)
+        val input = WeaverCommandKey(JsonElement::class, CommonCommands.ScopeKeys.INPUT_ELEMENT)
+        val yield = WeaverCommandKey(MutableJson::class, CommonCommands.ScopeKeys.OUTPUT_MUTABLE_ELEMENT)
     }
 
     override fun execute(context: WeaverContext, dispatcher: CommandDispatcher) {
@@ -61,7 +61,7 @@ object BooleanOperatorCommand : WeaverCommand {
         input: JsonElement
     ): MutableJson {
         val res = dispatcher.dispatch(
-            NAME,
+            name,
             context,
             Keys.left.holder(left),
             Keys.right.holder(right),

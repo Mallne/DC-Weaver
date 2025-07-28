@@ -8,14 +8,14 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
-object WeaverExpressionCommand : WeaverCommand {
-    const val NAME = "WeaverExpressionCommand"
+object WeaverExpressionCommand : ConvenientWeaverCommand {
+    override val name = "WeaverExpressionCommand"
 
     object Keys {
-        val expression = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression")
-        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, "Notation")
-        val input = WeaverCommandKey(JsonElement::class, CommonScopeKeys.INPUT_ELEMENT)
-        val yield = WeaverCommandKey(MutableJson::class, CommonScopeKeys.OUTPUT_MUTABLE_ELEMENT)
+        val expression = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.EXPRESSION)
+        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, CommonCommands.ScopeKeys.NOTATION)
+        val input = WeaverCommandKey(JsonElement::class, CommonCommands.ScopeKeys.INPUT_ELEMENT)
+        val yield = WeaverCommandKey(MutableJson::class, CommonCommands.ScopeKeys.OUTPUT_MUTABLE_ELEMENT)
     }
 
     override fun execute(context: WeaverContext, dispatcher: CommandDispatcher) {
@@ -41,7 +41,7 @@ object WeaverExpressionCommand : WeaverCommand {
             is TernaryExpression -> ternaryExpression(dispatcher, context, expression, notation, input)
             is BinaryExpression -> binaryExpression(dispatcher, context, expression, notation, input)
             is UnaryExpression -> unaryExpression(dispatcher, context, expression, notation, input)
-            is FunctionCallExpression -> TODO()
+            is FunctionCallExpression -> functionExpression(dispatcher, context, expression, notation, input)
             is NestedExpression -> nestedExpression(dispatcher, context, expression, notation, input)
             is WeaverContent -> weaverContentExpression(expression, notation, dispatcher, context, input)
         }
@@ -77,15 +77,18 @@ object WeaverExpressionCommand : WeaverCommand {
                 input
             )
 
-            is EqualityOperator -> EqualityOperatorCommand.thisCommand(
-                dispatcher,
-                context,
-                expression.left,
-                expression.right,
-                expression.operator as EqualityOperator,
-                notation,
-                input
-            )
+            is EqualityOperator -> {
+                val compare = EqualityOperatorCommand.thisCommand(
+                    dispatcher,
+                    context,
+                    expression.left,
+                    expression.right,
+                    expression.operator as EqualityOperator,
+                    notation,
+                    input
+                )
+                MutableJsonBoolean(compare)
+            }
         }
     }
 
@@ -109,6 +112,16 @@ object WeaverExpressionCommand : WeaverCommand {
         }
     }
 
+    private fun functionExpression(
+        dispatcher: CommandDispatcher,
+        context: WeaverContext,
+        expression: FunctionCallExpression,
+        notation: WeaverObjectNotationInvocation,
+        input: JsonElement
+    ): MutableJson {
+        return FunctionCallCommand.thisCommand(expression, notation, input, context, dispatcher)
+    }
+
     private fun coerceExpression(
         dispatcher: CommandDispatcher,
         context: WeaverContext,
@@ -128,7 +141,7 @@ object WeaverExpressionCommand : WeaverCommand {
         input: JsonElement
     ): MutableJson {
         val res = dispatcher.dispatch(
-            NAME,
+            name,
             context,
             Keys.expression.holder(expression),
             Keys.notation.holder(notation),
@@ -176,16 +189,6 @@ object WeaverExpressionCommand : WeaverCommand {
         input: JsonElement
     ): MutableJson {
         val newNotationInvocation = expression.resolve(notation.schemaRoot, notation.limboObject)
-        val res = dispatcher.dispatch(
-            ObjectNotationCommand.NAME,
-            context,
-            ObjectNotationCommand.Keys.notation.holder(newNotationInvocation),
-            ObjectNotationCommand.Keys.input.holder(input)
-        )
-        return if (res is CommandDispatcher.Result.Failure) {
-            throw res.throwable
-        } else {
-            context.get(ObjectNotationCommand.Keys.yield)
-        }
+        return ObjectNotationCommand.thisCommand(newNotationInvocation, input, context, dispatcher)
     }
 }

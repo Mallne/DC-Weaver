@@ -8,16 +8,16 @@ import cloud.mallne.dicentra.weaver.language.ast.expressions.TopLevelWeaverExpre
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
 import kotlinx.serialization.json.JsonElement
 
-object ArithmeticOperatorCommand : WeaverCommand {
-    const val NAME = "ArithmeticOperatorCommand"
+object ArithmeticOperatorCommand : ConvenientWeaverCommand {
+    override val name = "ArithmeticOperatorCommand"
 
     object Keys {
-        val left = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.left")
-        val right = WeaverCommandKey(TopLevelWeaverExpression::class, "TopLevelWeaverExpression.right")
-        val operator = WeaverCommandKey(ArithmeticOperator::class, "Operator")
-        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, "Notation")
-        val input = WeaverCommandKey(JsonElement::class, CommonScopeKeys.INPUT_ELEMENT)
-        val yield = WeaverCommandKey(MutableJson::class, CommonScopeKeys.OUTPUT_MUTABLE_ELEMENT)
+        val left = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.LEFT_EXPRESSION)
+        val right = WeaverCommandKey(TopLevelWeaverExpression::class, CommonCommands.ScopeKeys.RIGHT_EXPRESSION)
+        val operator = WeaverCommandKey(ArithmeticOperator::class, CommonCommands.ScopeKeys.OPERATOR)
+        val notation = WeaverCommandKey(WeaverObjectNotationInvocation::class, CommonCommands.ScopeKeys.NOTATION)
+        val input = WeaverCommandKey(JsonElement::class, CommonCommands.ScopeKeys.INPUT_ELEMENT)
+        val yield = WeaverCommandKey(MutableJson::class, CommonCommands.ScopeKeys.OUTPUT_MUTABLE_ELEMENT)
     }
 
 
@@ -315,7 +315,7 @@ object ArithmeticOperatorCommand : WeaverCommand {
         input: JsonElement
     ): MutableJson {
         val res = dispatcher.dispatch(
-            NAME,
+            name,
             context,
             Keys.left.holder(left),
             Keys.right.holder(right),
