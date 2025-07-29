@@ -38,6 +38,7 @@ koin = "4.1.0"
 koin-annotations = "2.1.0"
 dc-polyfill = "1.0.0-SNAPSHOT"
 dc-aviator = "1.0.0-SNAPSHOT"
+dc-weaver = "1.0.0-SNAPSHOT"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -67,6 +68,8 @@ koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref =
 koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
 koin-annotations-ksp = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
 dc-polyfill = { module = "cloud.mallne.dicentra:polyfill", version.ref = "dc-polyfill" }
+dc-weaver-tokenizer = { module = "cloud.mallne.dicentra.weaver:tokenizer", version.ref = "dc-weaver" }
+dc-weaver-core = { module = "cloud.mallne.dicentra.weaver:core", version.ref = "dc-weaver" }
 
 
 
