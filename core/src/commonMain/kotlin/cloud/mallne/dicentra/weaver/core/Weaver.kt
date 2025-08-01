@@ -11,9 +11,11 @@ import kotlinx.serialization.json.Json
 
 class Weaver(
     private val json: Json = Json,
+    private val preconfigure: WeaverEngineConfiguration.() -> Unit = {}
 ) {
     fun engine(schema: WeaverSchema, config: WeaverEngineConfiguration.() -> Unit = {}): WeaverEngine {
         val configScope = BasicEngineConfig()
+        preconfigure.invoke(configScope)
         config.invoke(configScope)
         for (plugin in configScope.plugins) {
             plugin.reconfigure.invoke(configScope)
