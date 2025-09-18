@@ -8,7 +8,7 @@ import cloud.mallne.dicentra.weaver.core.model.plugins.WeaverPlugin
 import cloud.mallne.dicentra.weaver.core.model.plugins.WeaverPluginConfigScope
 import cloud.mallne.dicentra.weaver.core.model.plugins.WeaverPluginInstance
 
-class BasicEngineConfig: WeaverEngineConfiguration {
+class BasicEngineConfig : WeaverEngineConfiguration {
     val plugins: MutableList<WeaverPluginInstance> = mutableListOf()
     val functions: MutableMap<String, WeaverFunctionInstance> = mutableMapOf()
 
@@ -35,7 +35,7 @@ class BasicEngineConfig: WeaverEngineConfiguration {
     ): Pair<String, WeaverFunctionInstance> {
         val o = function.install(config)
         add(o.name, o)
-        return  o.name to o;
+        return o.name to o
     }
 
     override fun add(

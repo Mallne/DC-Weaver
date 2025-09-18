@@ -29,7 +29,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
         return BinaryExpression(
             left = visit(ctx.first!!) as TopLevelWeaverExpression,
             right = visit(ctx.second!!) as TopLevelWeaverExpression,
-            operator = EqualityOperator.Companion.byValue(ctx.EQUALITY_OPERATIONS().text)
+            operator = EqualityOperator.byValue(ctx.EQUALITY_OPERATIONS().text)
                 ?: throw IllegalArgumentException("equality operator expression expected")
         )
     }
@@ -38,7 +38,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
         return BinaryExpression(
             left = visit(ctx.first!!) as TopLevelWeaverExpression,
             right = visit(ctx.second!!) as TopLevelWeaverExpression,
-            operator = BooleanOperator.Companion.byValue(ctx.BOOLEAN_OPERATIONS().text)
+            operator = BooleanOperator.byValue(ctx.BOOLEAN_OPERATIONS().text)
                 ?: throw IllegalArgumentException("boolean operator expression expected")
         )
     }
@@ -47,7 +47,7 @@ class ComputationWolAstBuilder : ComputationNotationBaseVisitor<WeaverExpression
         return BinaryExpression(
             left = visit(ctx.first!!) as TopLevelWeaverExpression,
             right = visit(ctx.second!!) as TopLevelWeaverExpression,
-            operator = ArithmeticOperator.Companion.byValue(ctx.ARITHMETIC_OPERATIONS().text)
+            operator = ArithmeticOperator.byValue(ctx.ARITHMETIC_OPERATIONS().text)
                 ?: throw IllegalArgumentException("arithmetic operator expression expected")
         )
     }
