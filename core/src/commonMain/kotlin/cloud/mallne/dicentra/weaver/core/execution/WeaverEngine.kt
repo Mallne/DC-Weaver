@@ -24,10 +24,15 @@ data class WeaverEngine(
 
     @OptIn(InternalAPI::class)
     inline fun <reified Out> execute(input: JsonElement, serializer: KSerializer<Out> = serializer<Out>()): Out? {
+        val objectEl = executeElement(input)
+        return serializationEngine.decodeFromJsonElement(serializer, objectEl)
+    }
+
+    @OptIn(InternalAPI::class)
+    fun executeElement(input: JsonElement): JsonElement {
         val outerType = outerLayout.finalType()
         require(outerType != null) { "RootLimboObject must have a final type" }
         val objectObj = ObjectNotationCommand.thisCommand(outerLayout, input, context, dispatcher)
-        val objectEl = objectObj.toStable()
-        return serializationEngine.decodeFromJsonElement(serializer, objectEl)
+        return objectObj.toStable()
     }
 }
