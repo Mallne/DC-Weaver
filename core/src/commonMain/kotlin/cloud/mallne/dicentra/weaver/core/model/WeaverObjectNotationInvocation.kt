@@ -5,6 +5,7 @@ import cloud.mallne.dicentra.weaver.core.specification.ObjectType
 import cloud.mallne.dicentra.weaver.core.specification.ObjectType.Companion.toObjectType
 import cloud.mallne.dicentra.weaver.core.specification.WeaverSchema
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
+import kotlinx.serialization.Serializable
 
 data class WeaverObjectNotationInvocation(
     val limboObject: LimboObjectDeclaration,
@@ -22,6 +23,7 @@ data class WeaverObjectNotationInvocation(
         }
     }
 
+    @Serializable
     enum class MetaAccess {
         Result,
         Accessor,

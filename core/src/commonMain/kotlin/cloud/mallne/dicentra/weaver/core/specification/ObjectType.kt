@@ -1,7 +1,9 @@
 package cloud.mallne.dicentra.weaver.core.specification
 
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class ObjectType(val compound: Boolean = false) {
     Boolean,
     String,
