@@ -6,7 +6,15 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.floatOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 
 @Serializable
 sealed interface MutableJson : Comparable<MutableJson> {
@@ -39,7 +47,7 @@ sealed interface MutableJson : Comparable<MutableJson> {
     fun asLongOrNull(): Long? = (this as? MutableJsonProxy)?.value?.jsonPrimitive?.longOrNull
 
     fun asStringOrNull(): String? =
-        if ((this is MutableJsonProxy) && this.value.jsonPrimitive.isString) (this as? MutableJsonProxy)?.value?.jsonPrimitive?.content else null
+        if ((this is MutableJsonProxy) && this.value.jsonPrimitive.isString) this?.value?.jsonPrimitive?.content else null
 
     override fun compareTo(other: MutableJson): Int {
         when {
@@ -90,13 +98,15 @@ sealed interface MutableJson : Comparable<MutableJson> {
     }
 
     fun toStable(): JsonElement {
-         return when (this) {
+        return when (this) {
             is MutableJsonObject -> {
                 JsonObject(this.map { it.key to it.value.toStable() }.toMap())
             }
+
             is MutableJsonArray -> {
                 JsonArray(this.map { it.toStable() })
             }
+
             is MutableJsonProxy -> {
                 this.value
             }
