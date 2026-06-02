@@ -73,3 +73,16 @@ The project uses Gradle with the Kotlin Multiplatform plugin.
 - **Schema-Driven:** Everything starts with a `WeaverSchema`.
 - **Plugin System:** Extendable via `WeaverPlugin`, allowing for custom context rewriting and command dispatching.
 - **Stable Outputs:** The engine ensures that transformed objects are "stable" before final serialization.
+
+---
+
+## Published Documentation (Notary)
+
+The Weaver documentation is published in the DiCentra collection with the following hierarchy:
+
+- [Weaver](https://docs.mallne.cloud/doc/weaver-m0yVu6OsV2) 🧵 — Hub/overview
+  - [Tokenizer](https://docs.mallne.cloud/doc/tokenizer-gNEkVqcjas) 🔤 — ANTLR grammar, AST builders, expression hierarchy
+  - [Core: Engine & Schema](https://docs.mallne.cloud/doc/core-engine-schema-pnfDyGewSG) ⚙️ — Weaver facade, engine, schema model
+  - [Core: Execution Model](https://docs.mallne.cloud/doc/core-execution-model-UStO63t1mQ) ⚡ — Context, dispatcher, commands
+  - [Core: Plugin System](https://docs.mallne.cloud/doc/core-plugin-system-0o0fIjFEbH) 🔌 — WeaverPlugin, functions, config
+  - [WOL Reference](https://docs.mallne.cloud/doc/wol-reference-1bOWuuzvN4) 📖 — Full WOL syntax reference
