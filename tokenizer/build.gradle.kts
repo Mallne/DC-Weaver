@@ -58,6 +58,7 @@ kotlin {
             }
         }
     }
+    jvmToolchain(25)
 }
 
 val generateKotlinGrammarSource = tasks.register<AntlrKotlinTask>("generateKotlinGrammarSource") {
