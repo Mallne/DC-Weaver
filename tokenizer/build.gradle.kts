@@ -116,7 +116,9 @@ mavenPublishing {
         }
     }
 
-    signAllPublications()
+    if (project.findProperty("dc.signingKey") != null) {
+        signAllPublications()
+    }
 
-    coordinates(group.toString(), project.name, version.toString())
+    coordinates(group.toString(), project.name)
 }
