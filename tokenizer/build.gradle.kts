@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 group = "cloud.mallne.dicentra.weaver"
-version = "1.0.0-SNAPSHOT"
+version = project.findProperty("VERSION_NAME") ?: "1.0.0-SNAPSHOT"
 description = "The tokenizer, lexer and parser for the Weaver Object Language."
 
 plugins {
