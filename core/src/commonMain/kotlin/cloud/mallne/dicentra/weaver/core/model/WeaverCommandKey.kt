@@ -4,7 +4,7 @@ import kotlin.reflect.KClass
 
 data class WeaverCommandKey<T : Any>(
     val clazz: KClass<T>,
-    val name: String = clazz.qualifiedName ?: "Unknown",
+    val name: String,
 ) {
     fun holder(value: T) = DataHolder(this, value)
 
