@@ -87,26 +87,6 @@ val generateKotlinGrammarSource = tasks.register<AntlrKotlinTask>("generateKotli
 
 mavenPublishing {
     publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
-
-                pom {
-                    name = "DiCentra Weaver Tokenizer"
-                    description = "The tokenizer, lexer and parser for the Weaver Object Language."
-                    inceptionYear = "2025"
-                    developers {
-                        developer {
-                            name = "Mallne"
-                            url = "mallne.cloud"
-                        }
-                    }
-                }
-            }
-        }
-
         repositories {
             maven {
                 name = "DiCentraArtefacts"
@@ -119,6 +99,16 @@ mavenPublishing {
         }
     }
 
-
     coordinates(group.toString(), project.name)
+    pom {
+        name = "DiCentra Weaver Tokenizer"
+        description = "The tokenizer, lexer and parser for the Weaver Object Language."
+        inceptionYear = "2025"
+        developers {
+            developer {
+                name = "Mallne"
+                url = "mallne.cloud"
+            }
+        }
+    }
 }
