@@ -10,7 +10,7 @@ ben-manes-versions-v = "0.66.0"
 dependency-analysis-v = "3.19.2"
 kotlin = "2.4.21"
 ktor = "3.6.0"
-serialization = "1.11.0"
+serialization = "1.12.0"
 version-catalog-update-v = "1.1.1"
 
 [libraries]
