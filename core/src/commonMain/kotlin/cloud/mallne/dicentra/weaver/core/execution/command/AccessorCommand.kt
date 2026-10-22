@@ -32,8 +32,8 @@ object AccessorCommand : ConvenientWeaverCommand     {
             val path = element.segment.joinToString(separator = "") {
                 InterpolatedPartCommand.thisCommand(it, context, dispatcher)
             }
-            val pointerType = pointer.type()
             if (path.isNotEmpty()) {
+                val pointerType = pointer.type()
                 if (!(pointerType == ObjectType.Object || pointerType == ObjectType.Map)) {
                     throw WeaverComputationException("Cannot access property on non-object value")
                 }
@@ -44,11 +44,21 @@ object AccessorCommand : ConvenientWeaverCommand     {
             }
 
             if (element.arrayAccess != null) {
+                // Property traversal above may have changed pointer from an object to an array.
+                val pointerType = pointer.type()
                 if (pointerType != ObjectType.List) {
                     throw WeaverComputationException("Cannot access array index on non-array value")
                 }
-                pointer = ArrayAccessCommand.thisCommand(element.arrayAccess!!,
-                    pointer as MutableJsonArray, input, notation, context, dispatcher)
+                val array = pointer.asListOrNull()?.let(::MutableJsonArray)
+                    ?: throw WeaverComputationException("Cannot access array index on non-array value")
+                pointer = ArrayAccessCommand.thisCommand(
+                    element.arrayAccess!!,
+                    array,
+                    input,
+                    notation,
+                    context,
+                    dispatcher,
+                )
                 context.log("AccessorCommand:ArrayAccess") {
                     debug("Retrieved array index ${element.arrayAccess} to $pointer")
                 }

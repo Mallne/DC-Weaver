@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.mavenPublish)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.npm.publish)
 }
 
 kotlin {
@@ -28,6 +29,7 @@ kotlin {
     }
     js {
         nodejs()
+        binaries.library()
         browser()
     }
     wasmJs {
@@ -48,8 +50,29 @@ kotlin {
                 api(project(":tokenizer"))
             }
         }
+        val commonTest = getByName("commonTest") {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
     jvmToolchain(25)
+}
+
+npmPublish {
+    organization = "dicentra"
+    registries {
+        register("nodeRegistry") {
+            uri.set("https://registry.mallne.cloud/repository/NodeRegistry/")
+            auth.set(providers.environmentVariable("NPM_TOKEN").orNull)
+        }
+    }
+    packages {
+        named("js") {
+            packageName = "weaver-core"
+            version = project.version.toString().replace("-SNAPSHOT", "-snapshot")
+        }
+    }
 }
 
 

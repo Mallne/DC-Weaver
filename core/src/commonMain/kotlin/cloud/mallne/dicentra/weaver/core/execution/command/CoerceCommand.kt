@@ -93,7 +93,13 @@ object CoerceCommand : ConvenientWeaverCommand {
     }
 
     private fun stringCoercion(input: MutableJson): MutableJsonProxy {
-        return MutableJsonString(input.toString())
+        val value = (input as? MutableJsonProxy)
+            ?.value
+            ?.jsonPrimitive
+            ?.takeIf { it.isString }
+            ?.content
+            ?: input.toString()
+        return MutableJsonString(value)
     }
 
     private fun booleanCoercion(input: MutableJson): MutableJsonProxy {

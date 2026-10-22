@@ -129,7 +129,11 @@ object WeaverExpressionCommand : ConvenientWeaverCommand {
         notation: WeaverObjectNotationInvocation,
         input: JsonElement
     ): MutableJsonProxy {
-        val interm = thisCommand(dispatcher, context, expression, notation, input)
+        val interm = when (val content = expression.content) {
+            is WeaverContent -> weaverContentExpression(content, notation, dispatcher, context, input)
+            is TopLevelWeaverExpression -> thisCommand(dispatcher, context, content, notation, input)
+            else -> throw IllegalArgumentException("Unsupported top-level coercion content: ${content::class}")
+        }
         return CoerceCommand.thisCommand(dispatcher, context, interm, expression.type)
     }
 

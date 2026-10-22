@@ -115,7 +115,9 @@ object ComputationCommand : ConvenientWeaverCommand {
 
         val y2 = MutableJsonArray()
 
-        for (i in 0..count) {
+        // The loop expression is a count (the default `|{}|ai|` is the array's size), not its
+        // final inclusive index. Using `..` emitted one extra element and an invalid index.
+        for (i in 0 until count) {
             val value = if (list.size == 1 && list.first().first == null) {
                 list.first()
             } else {

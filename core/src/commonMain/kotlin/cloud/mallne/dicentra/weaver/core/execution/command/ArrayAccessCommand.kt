@@ -4,10 +4,12 @@ import cloud.mallne.dicentra.weaver.core.execution.command.CommonCommands.ScopeK
 import cloud.mallne.dicentra.weaver.core.model.*
 import cloud.mallne.dicentra.weaver.core.model.json.MutableJson
 import cloud.mallne.dicentra.weaver.core.model.json.MutableJsonArray
+import cloud.mallne.dicentra.weaver.exceptions.WeaverComputationException
 import cloud.mallne.dicentra.weaver.core.specification.compute.expression.resolve
 import cloud.mallne.dicentra.weaver.language.ast.expressions.ArrayAccess
 import cloud.mallne.dicentra.weaver.language.ast.expressions.ComputedArrayIndexExpr
 import cloud.mallne.dicentra.weaver.language.ast.expressions.LiteralArrayIndex
+import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
 import kotlinx.serialization.json.JsonElement
 
 object ArrayAccessCommand : ConvenientWeaverCommand {
@@ -29,7 +31,15 @@ object ArrayAccessCommand : ConvenientWeaverCommand {
         val yield = when (access) {
             is ComputedArrayIndexExpr -> {
                 val won = access.indexExpression.resolve(notation.schemaRoot, notation.limboObject)
-                ObjectNotationCommand.thisCommand(won, input, context, dispatcher)
+                val indexValue = ObjectNotationCommand.thisCommand(won, input, context, dispatcher)
+                val index = indexValue.asIntOrNull() ?: CoerceCommand.thisCommand(
+                    dispatcher,
+                    context,
+                    indexValue,
+                    TypeCoercion.Type.Integer,
+                ).asIntOrNull()
+                index?.let(array::getOrNull)
+                    ?: throw WeaverComputationException("Computed array index is invalid or out of bounds: $indexValue")
             }
 
             is LiteralArrayIndex -> array[access.index]
