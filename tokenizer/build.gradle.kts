@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import com.strumenta.antlrkotlin.gradle.AntlrKotlinTask
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -21,10 +20,9 @@ plugins {
 kotlin {
     jvm()
     android {
-        namespace = project.group.toString()
+        namespace = "${project.group}.tokenizer"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_25)
         }
