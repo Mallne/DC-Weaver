@@ -7,6 +7,7 @@ import cloud.mallne.dicentra.weaver.core.model.json.MutableJsonArray
 import cloud.mallne.dicentra.weaver.core.model.json.MutableJsonProxy
 import cloud.mallne.dicentra.weaver.core.specification.ObjectType
 import cloud.mallne.dicentra.weaver.exceptions.WeaverComputationException
+import cloud.mallne.dicentra.weaver.exceptions.WeaverMissingPropertyException
 import cloud.mallne.dicentra.weaver.language.ast.expressions.PathAccessExpr
 import cloud.mallne.dicentra.weaver.language.ast.expressions.TypeCoercion
 import kotlinx.serialization.json.JsonArray
@@ -28,7 +29,7 @@ object AccessorCommand : ConvenientWeaverCommand     {
         val accessor = context.get(Keys.pathExpression)
         val notation = context.get(Keys.notation)
         var pointer: MutableJson = MutableJsonProxy(input)
-        for (element in accessor) {
+        for ((index, element) in accessor.withIndex()) {
             val path = element.segment.joinToString(separator = "") {
                 InterpolatedPartCommand.thisCommand(it, context, dispatcher)
             }
@@ -37,7 +38,7 @@ object AccessorCommand : ConvenientWeaverCommand     {
                 if (!(pointerType == ObjectType.Object || pointerType == ObjectType.Map)) {
                     throw WeaverComputationException("Cannot access property on non-object value")
                 }
-                pointer = pointer.asMapOrNull()?.get(path) ?: throw WeaverComputationException("Property not found: $path")
+                pointer = pointer.asMapOrNull()?.get(path) ?: throw WeaverMissingPropertyException(path, atRoot = index == 0)
                 context.log("AccessorCommand:PathTraversal") {
                     trace("Retrieved property $path to $pointer")
                 }
