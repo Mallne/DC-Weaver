@@ -30,7 +30,15 @@ jobs:
       - name: Publish release
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
-          ./gradlew --no-daemon publish -PVERSION_NAME="$TAG_VERSION"
+          # npm-publish 3.7.0 cannot assemble the automatically registered wasmJs npm package.
+          # Keep publishing wasmJs through Maven; publish the supported JavaScript npm packages.
+          ./gradlew --no-daemon publish -PVERSION_NAME="$TAG_VERSION" \
+            -x :core:assembleWasmJsPackage \
+            -x :core:packWasmJsPackage \
+            -x :core:publishWasmJsPackageToNodeRegistryRegistry \
+            -x :tokenizer:assembleWasmJsPackage \
+            -x :tokenizer:packWasmJsPackage \
+            -x :tokenizer:publishWasmJsPackageToNodeRegistryRegistry
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
