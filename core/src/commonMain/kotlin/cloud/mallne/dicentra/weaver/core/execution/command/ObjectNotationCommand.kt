@@ -3,6 +3,10 @@ package cloud.mallne.dicentra.weaver.core.execution.command
 import cloud.mallne.dicentra.weaver.core.execution.command.CommonCommands.ScopeKeys.PARAMDENOM
 import cloud.mallne.dicentra.weaver.core.model.*
 import cloud.mallne.dicentra.weaver.core.model.json.MutableJson
+import cloud.mallne.dicentra.weaver.core.model.json.MutableJsonNull
+import cloud.mallne.dicentra.weaver.core.specification.EmptyCaseHandling
+import cloud.mallne.dicentra.weaver.core.specification.ObjectType
+import cloud.mallne.dicentra.weaver.exceptions.WeaverMissingPropertyException
 import kotlinx.serialization.json.JsonElement
 
 object ObjectNotationCommand : ConvenientWeaverCommand {
@@ -29,7 +33,17 @@ object ObjectNotationCommand : ConvenientWeaverCommand {
                     val kv = thisCommand(content, input, context, dispatcher)
                     context.put(WeaverCommandKey(MutableJson::class, PARAMDENOM + key), kv)
                 }
-                ComputationCommand.thisCommand(notation.limboObject.compute, input, notation, context, dispatcher)
+                if (notation.limboObject.emptyCase == EmptyCaseHandling.Null) {
+                    val value = try {
+                        AccessorCommand.thisCommand(input, notation.limboObject.accessorAst, context, dispatcher)
+                    } catch (_: WeaverMissingPropertyException) {
+                        null
+                    }
+                    if (value == null || value.type() == ObjectType.Undefined) MutableJsonNull()
+                    else ComputationCommand.thisCommand(notation.limboObject.compute, input, notation, context, dispatcher)
+                } else {
+                    ComputationCommand.thisCommand(notation.limboObject.compute, input, notation, context, dispatcher)
+                }
             }
             WeaverObjectNotationInvocation.MetaAccess.Parameter -> {
                 context.get(WeaverCommandKey(MutableJson::class, PARAMDENOM + notation.parameter!!))

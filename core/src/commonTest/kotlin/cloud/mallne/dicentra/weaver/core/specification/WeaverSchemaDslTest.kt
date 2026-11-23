@@ -1,9 +1,11 @@
 package cloud.mallne.dicentra.weaver.core.specification
 
 import cloud.mallne.dicentra.weaver.core.Weaver
+import cloud.mallne.dicentra.weaver.exceptions.WeaverMissingPropertyException
 import cloud.mallne.dicentra.weaver.core.specification.compute.ArrayComputationDeclaration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.buildJsonObject
@@ -15,6 +17,24 @@ import kotlin.test.assertIs
 
 class WeaverSchemaDslTest {
     private data class Amount(val value: Double?, val aggregation: String, val periodMinutes: Int?)
+
+    @Test
+    fun nullEmptyCaseHandlesOnlyMissingOrNullAccessor() {
+        fun schema(emptyCase: EmptyCaseHandling) = weaverSchema("optional") {
+            root("result", Wol.reference("value"))
+            transform("value", "record.temperature", emptyCase = emptyCase) {
+                value("{}", ObjectType.Number)
+            }
+        }
+        val optional = Weaver().engine(schema(EmptyCaseHandling.Null))
+        assertEquals(JsonNull, optional.executeElement(Json.parseToJsonElement("""{"record":{}}""")))
+        assertEquals(JsonNull, optional.executeElement(Json.parseToJsonElement("""{"record":{"temperature":null}}""")))
+        assertEquals(JsonPrimitive(18), optional.executeElement(Json.parseToJsonElement("""{"record":{"temperature":18}}""")))
+        assertFailsWith<WeaverMissingPropertyException> {
+            Weaver().engine(schema(EmptyCaseHandling.Undefined))
+                .executeElement(Json.parseToJsonElement("""{"record":{}}"""))
+        }
+    }
 
     @Test
     fun propertyReferencesEmitTheirNamesAndWolExpressions() {
